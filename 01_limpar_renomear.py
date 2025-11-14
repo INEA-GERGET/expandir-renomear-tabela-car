@@ -1,8 +1,5 @@
 import pandas as pd
-import os
 import logging
-import math
-import numpy
 
 # Configuração básica de logging para feedback
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
