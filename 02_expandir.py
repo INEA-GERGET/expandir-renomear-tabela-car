@@ -125,7 +125,7 @@ def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
 
         
         # --- PASSO 4: Salvamento do Resultado ---
-        df_final.to_csv(arquivo_saida, index=False)
+        df_final.to_csv(arquivo_saida, index=False, sep=';')
         
         print(f"\n✅ Sucesso! Os dados transformados e renomeados foram salvos em: {arquivo_saida}")
         tamanho_antes = len(df['cpf'])
