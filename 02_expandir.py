@@ -1,6 +1,4 @@
 import pandas as pd
-import os
-import re
 
 # --- 1. Configuração de Caminhos ---
 NOME_ARQUIVO_ENTRADA = "Tabela_CAR_limpa.csv" 
