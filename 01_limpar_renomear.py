@@ -12,15 +12,15 @@ caminho_arquivo = 'Tabela_CAR.csv'
 # Parâmetros de leitura ajustados com base na análise do arquivo
 csv_params = {
     'filepath_or_buffer': caminho_arquivo,
-    'sep': ';',          # Delimitador correto (ponto e vírgula)
-    'encoding': 'latin-1' # Codificação que resolve o problema 'UnicodeDecodeError'
+    'sep': ';',         
+    'encoding': 'latin-1' 
 }
 
 try:
     logging.info(f"Tentando ler o arquivo: {caminho_arquivo}")
     
     # 1. Leitura do arquivo CSV com os parâmetros ajustados
-    df = pd.read_csv(**csv_params, low_memory=False) # Adicionei low_memory=False para lidar com DtypeWarning
+    df = pd.read_csv(**csv_params, low_memory=False) 
     logging.info("✅ Arquivo lido com sucesso.")
 
     # Garante que os nomes das colunas estejam sem espaços extras no início/fim
@@ -136,7 +136,7 @@ try:
 
     # Remove os dados de CARs que foram cancelados
     cars_nao_cancelados = df['sit_imovel'] != 'Cancelado'
-    df = df[cars_nao_cancelados].copy() # Uso de .copy() para evitar SettingWithCopyWarning
+    df = df[cars_nao_cancelados].copy()
     
     tam_antes = len(df['cod_imovel'])
     
@@ -155,5 +155,5 @@ try:
     print("="*50)
     
     # CORREÇÃO: Adicionado index=False para não salvar o índice do pandas no CSV
-    df.to_csv('Planilha.csv', index=False, sep=';') # Adicionado separador de volta
+    df.to_csv('Planilha.csv', index=False, sep=';') 
     logging.info("✅ Arquivo 'Tabela_CAR_limpa.csv' salvo com sucesso, sem o índice.")
