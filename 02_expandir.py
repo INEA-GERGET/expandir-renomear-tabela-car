@@ -1,12 +1,15 @@
 import pandas as pd
+#import os
+#import re
 
 # --- 1. Configuração de Caminhos ---
-NOME_ARQUIVO_ENTRADA = "Tabela_CAR_limpa.csv" 
-NOME_ARQUIVO_SAIDA = "Tabela_CAR_Final.csv" 
+NOME_ARQUIVO_ENTRADA = "Planilha.csv" 
+NOME_ARQUIVO_SAIDA = "CAR_expandido.csv" 
 
 def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
     """
-    Transfor ma a planilha usando o método EXPLODE após garantir que as coluna.
+    Transfor ma a planilha usando o método EXPLODE após garantir que as colunas
+    tenham o mesmo número de elementos, resolvendo o erro 'matching element counts'.
     """
     try:
         # --- PASSO 1: Leitura Robusta ---
@@ -38,6 +41,7 @@ def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
             
         
         # 2.2. ALINHAMENTO MANUAL: Garante que todas as listas tenham o mesmo comprimento
+        # O erro 'matching element counts' ocorre AQUI.
         
         df_listas = df[colunas_expandir].to_dict('records')
         
@@ -81,7 +85,7 @@ def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
             'mod_fisc',
             'tipo_imovel',
             'estado',
-            'municipio_imovel',
+            'municipio',
             'sit_imovel',
             'fase_processo',
             'area_consolidada',
@@ -125,15 +129,16 @@ def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
 
         
         # --- PASSO 4: Salvamento do Resultado ---
-        df_final.to_csv(arquivo_saida, index=False, sep=';')
-        
+        df_final.to_csv(arquivo_saida, index=False, sep=';', encoding='latin-1')
+        df_final.to_excel(arquivo_saida.replace('.csv', '.xlsx'), index=False, engine='openpyxl')
+
         print(f"\n✅ Sucesso! Os dados transformados e renomeados foram salvos em: {arquivo_saida}")
         tamanho_antes = len(df['cpf'])
         tamanho_depois = len(df_final['cpf'])
         diff = tamanho_depois - tamanho_antes
-        print("✨ "*32)
+        print("✨ "*31)
         print(f"✨   Nova planilha {NOME_ARQUIVO_SAIDA} com {diff} linhas a mais do que a planilha original   ✨ ")
-        print("✨ "*32)
+        print("✨ "*31)
 
     except FileNotFoundError:
         print(f"❌ Erro: O arquivo de entrada '{arquivo_entrada}' não foi encontrado. Verifique a ortografia e a localização.")
