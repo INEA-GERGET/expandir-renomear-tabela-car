@@ -1,23 +1,26 @@
 import pandas as pd
+#import os
 import logging
+import math
+#import numpy
 
 # Configuração básica de logging para feedback
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-caminho_arquivo = 'Tabela_CAR.csv' 
+caminho_arquivo = 'Relatorio.csv' 
 
 # Parâmetros de leitura ajustados com base na análise do arquivo
 csv_params = {
     'filepath_or_buffer': caminho_arquivo,
-    'sep': ';',         
-    'encoding': 'latin-1' 
+    'sep': ';',          # Delimitador correto (ponto e vírgula)
+    'encoding': 'latin-1' # Codificação que resolve o problema 'UnicodeDecodeError'
 }
 
 try:
     logging.info(f"Tentando ler o arquivo: {caminho_arquivo}")
     
     # 1. Leitura do arquivo CSV com os parâmetros ajustados
-    df = pd.read_csv(**csv_params, low_memory=False) 
+    df = pd.read_csv(**csv_params, low_memory=False) # Adicionei low_memory=False para lidar com DtypeWarning
     logging.info("✅ Arquivo lido com sucesso.")
 
     # Garante que os nomes das colunas estejam sem espaços extras no início/fim
@@ -91,7 +94,7 @@ try:
     'Módulos Fiscais': 'mod_fisc',
     'Tipo do Imóvel': 'tipo_imovel',
     'Estado': 'estado',
-    'Município': 'municipio_imovel',
+    'Município': 'municipio',
     'Situação do Imóvel': 'sit_imovel',
     'Fase do Processo': 'fase_processo',
     'Área Consolidada (ha)': 'area_consolidada',
@@ -133,7 +136,7 @@ try:
 
     # Remove os dados de CARs que foram cancelados
     cars_nao_cancelados = df['sit_imovel'] != 'Cancelado'
-    df = df[cars_nao_cancelados].copy()
+    df = df[cars_nao_cancelados].copy() # Uso de .copy() para evitar SettingWithCopyWarning
     
     tam_antes = len(df['cod_imovel'])
     
@@ -152,5 +155,14 @@ try:
     print("="*50)
     
     # CORREÇÃO: Adicionado index=False para não salvar o índice do pandas no CSV
-    df.to_csv('Planilha.csv', index=False, sep=';') 
-    logging.info("✅ Arquivo 'Tabela_CAR_limpa.csv' salvo com sucesso, sem o índice.")
+    df.to_csv('Planilha.csv', index=False, sep=';', encoding='latin-1') # Adicionado separador de volta
+    logging.info("✅ Arquivo 'Planilha.csv' salvo com sucesso, sem o índice.")
+
+except FileNotFoundError:
+    logging.error(f"❌ ERRO: O arquivo '{caminho_arquivo}' não foi encontrado.")
+    logging.error("Certifique-se de que ele está na mesma pasta do script ou use o caminho absoluto.")
+except pd.errors.ParserError as e:
+    logging.error(f"❌ ERRO DE PARSING: Falha ao ler o arquivo. Causa: {e}")
+    logging.error("Verifique se há aspas desalinhadas ou delimitadores em excesso nas primeiras linhas do arquivo.")
+except Exception as e:
+    logging.error(f"❌ ERRO INESPERADO: {e}")
