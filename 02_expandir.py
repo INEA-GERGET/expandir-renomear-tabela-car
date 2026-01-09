@@ -1,10 +1,9 @@
 import pandas as pd
-#import os
-#import re
+
 
 # --- 1. Configuração de Caminhos ---
 NOME_ARQUIVO_ENTRADA = "Planilha.csv" 
-NOME_ARQUIVO_SAIDA = "CAR_expandido.csv" 
+NOME_ARQUIVO_SAIDA = "tabela_car.csv" 
 
 def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
     """
@@ -136,9 +135,9 @@ def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
         tamanho_antes = len(df['cpf'])
         tamanho_depois = len(df_final['cpf'])
         diff = tamanho_depois - tamanho_antes
-        print("✨ "*31)
+        print("✨ "*30)
         print(f"✨   Nova planilha {NOME_ARQUIVO_SAIDA} com {diff} linhas a mais do que a planilha original   ✨ ")
-        print("✨ "*31)
+        print("✨ "*30)
 
     except FileNotFoundError:
         print(f"❌ Erro: O arquivo de entrada '{arquivo_entrada}' não foi encontrado. Verifique a ortografia e a localização.")
