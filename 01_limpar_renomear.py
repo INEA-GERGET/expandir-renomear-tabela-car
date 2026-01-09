@@ -1,13 +1,11 @@
 import pandas as pd
-#import os
 import logging
-import math
-#import numpy
+
 
 # Configuração básica de logging para feedback
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-caminho_arquivo = 'Relatorio.csv' 
+caminho_arquivo = 'Relatorio-Buscar-Imoveis.csv' 
 
 # Parâmetros de leitura ajustados com base na análise do arquivo
 csv_params = {
