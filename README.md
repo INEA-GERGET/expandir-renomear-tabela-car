@@ -19,9 +19,8 @@ Execute o código `02_expandir.py` para expandir as células com múltiplos dado
 
 ### Sobre os arquivos
 
-* [**01_limpar_renomear.py**](01_limpar_renomear.py): Tem como input a `Tabela_CAR.csv` e output `Tabela_CAR_limpa.csv` com colunas removidas e renomeadas.
-* [**02_expandir.py**](02_expandir.py): Tem como input a `Tabela_CAR_limpa.csv` e retorna a `Tabela_CAR_Final.csv` com os dados expandidos, é possível verificar no terminal a quantidade de linhas a mais que foram geradas na tabela final. 
-* [**Tabela_CAR.csv**](Tabela_CAR.csv): Tabela CAR vazia para preservar os dados sensíveis contidos nela. 
+* [**01_limpar_renomear.py**](01_limpar_renomear.py): Tem como input a `Relatorio-Buscar-Imoveis.csv` e output `Planilha.csv` com colunas removidas e renomeadas.
+* [**02_expandir.py**](02_expandir.py): Tem como input a `Planilha.csv` e retorna as `tabela_car.csv` e `tabela_car.xlsx` com os dados expandidos, é possível verificar no terminal a quantidade de linhas a mais que foram geradas na tabela final. 
 
 ## Instalação
 
