@@ -1,25 +1,23 @@
 import pandas as pd
 
-
 # --- 1. Configuração de Caminhos ---
 NOME_ARQUIVO_ENTRADA = "Planilha.csv" 
 NOME_ARQUIVO_SAIDA = "tabela_car.csv" 
 
 def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
     """
-    Transfor ma a planilha usando o método EXPLODE após garantir que as colunas
-    tenham o mesmo número de elementos, resolvendo o erro 'matching element counts'.
+    Transforma a planilha usando o método EXPLODE após garantir que as colunas
+    tenham o mesmo número de elementos, suportando separação por '\n' ou ','.
     """
     try:
         # --- PASSO 1: Leitura Robusta ---
         print(f"Lendo o arquivo de entrada: {arquivo_entrada}...")
         
-        # Leitura com os parâmetros de codificação e separador corretos
         df = pd.read_csv(
             arquivo_entrada, 
             sep=';', 
             encoding='latin-1',
-            low_memory=False # Mantido para evitar o DtypeWarning e garantir que o pandas leia os tipos corretamente
+            low_memory=False 
         )
         df.columns = df.columns.str.strip()
         
@@ -32,41 +30,37 @@ def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
             'nome'
         ]
         
-        # 2.1. Pré-processamento: Converte as colunas para lista usando '\n' como separador
+        # 2.1. Pré-processamento: Converte as colunas para lista usando '\n' OU ',' como separador
+        # A regex r'\s*[\n,]\s*' divide por quebra de linha ou vírgula, limpando espaços extras ao redor.
         for coluna in colunas_expandir:
-            # Garante que a coluna é string, remove espaços e faz o split
-            # O .fillna('') é importante para garantir que o .str.split funcione
-            df[coluna] = df[coluna].astype(str).str.strip().fillna('').str.split('\n')
+            df[coluna] = (
+                df[coluna]
+                .astype(str)
+                .str.strip()
+                .fillna('')
+                .str.split(r'\s*[\n,]\s*', regex=True)
+            )
             
-        
         # 2.2. ALINHAMENTO MANUAL: Garante que todas as listas tenham o mesmo comprimento
-        # O erro 'matching element counts' ocorre AQUI.
-        
         df_listas = df[colunas_expandir].to_dict('records')
         
         for i, row in enumerate(df_listas):
-            # Encontra o tamanho máximo da lista nesta linha
             max_len = max(len(row[col]) for col in colunas_expandir)
             
-            # Padroniza todas as listas para o tamanho máximo
             for coluna in colunas_expandir:
                 lista = row[coluna]
                 if len(lista) < max_len:
-                    # Adiciona valores nulos (pd.NA) até atingir o max_len
                     lista.extend([pd.NA] * (max_len - len(lista)))
         
         # 2.3. Cria DataFrames temporários com as listas alinhadas e substitui as colunas
         for coluna in colunas_expandir:
             df[coluna] = [row[coluna] for row in df_listas]
 
-
-        # 2.4. Aplica o EXPLODE em todas as colunas de proprietário ao mesmo tempo
-        # Esta linha agora deve funcionar, pois as listas estão alinhadas
+        # 2.4. Aplica o EXPLODE em todas as colunas ao mesmo tempo
         df_final = df.explode(colunas_expandir)
         
         # 2.5. Limpeza Final dos Dados Explodidos (remove espaços)
         for col in colunas_expandir:
-             # O str.strip() deve ser feito APENAS em colunas de string
              df_final[col] = df_final[col].apply(lambda x: str(x).strip() if pd.notna(x) else pd.NA)
 
         # 2.6. Remove linhas onde o CPF/CNPJ (após o explode) está vazio ou é 'nan'
@@ -126,7 +120,6 @@ def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
         # Filtra e reordena as colunas
         df_final = df_final[colunas_selecionadas]
 
-        
         # --- PASSO 4: Salvamento do Resultado ---
         df_final.to_csv(arquivo_saida, index=False, sep=';', encoding='latin-1')
         df_final.to_excel(arquivo_saida.replace('.csv', '.xlsx'), index=False, engine='openpyxl')
@@ -136,7 +129,7 @@ def transformar_planilha(arquivo_entrada: str, arquivo_saida: str):
         tamanho_depois = len(df_final['cpf'])
         diff = tamanho_depois - tamanho_antes
         print("✨ "*30)
-        print(f"✨   Nova planilha {NOME_ARQUIVO_SAIDA} com {diff} linhas a mais do que a planilha original   ✨ ")
+        print(f"✨  Nova planilha {NOME_ARQUIVO_SAIDA} com {diff} linhas a mais do que a planilha original   ✨ ")
         print("✨ "*30)
 
     except FileNotFoundError:
